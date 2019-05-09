@@ -79,6 +79,41 @@ You should build the following routes:
 
 To get the data into your database, you will want to figure out how to use your `LibraryParser` class in the `db/seeds.rb` file.
 
+## Flash Message
+
+You will need to add a flash message for when a new instance is created. Let's take a new song creation as an example.
+
+First, add `gem 'rack-flash3'` to the Gemfile; run `bundle` to install it.
+
+You can see in Rack Flash's [Sinatra](https://github.com/treeder/rack-flash#sinatra)
+section the basics for getting flash messages working with Sinatra.
+
+(Note: You'll need to `enable :sessions` for your application and `use Rack::Flash`
+in the appropriate controller.)
+
+You'll want to add a flash message to the `post '/songs'` and
+`patch '/songs/:slug'` actions. `post '/songs'` might look something like:
+
+```ruby
+post '/songs' do
+  # ...
+  # ^ code for creating and saving a new song
+  flash[:message] = "Successfully created song."
+  redirect to("/songs/#{@song.slug}")
+end
+```
+
+To display this message in the view, just add
+
+```html
+<!-- views/songs/show.erb -->
+
+<% if flash.has?(:message) %>
+  <%= flash[:message] %>
+<% end %>
+```
+
+to the top of the view.
 
 ### How to approach this lab
 
@@ -137,42 +172,6 @@ params = {
 <% end %>
 ```
 
-## Flash Message
-
-You can add a flash message for when a new instance is created. Let's take a new song creation as an example.
-
-First, add `gem 'rack-flash3'` to the Gemfile; run `bundle` to install it.
-
-You can see in Rack Flash's [Sinatra](https://github.com/treeder/rack-flash#sinatra)
-section the basics for getting flash messages working with Sinatra.
-
-(Note: You'll need to `enable :sessions` for your application and `use Rack::Flash`
-in the appropriate controller.)
-
-You'll want to add a flash message to the `post '/songs'` and
-`patch '/songs/:slug'` actions. `post '/songs'` might look something like:
-
-```ruby
-post '/songs' do
-  # ...
-  # ^ code for creating and saving a new song
-  flash[:message] = "Successfully created song."
-  redirect to("/songs/#{@song.slug}")
-end
-```
-
-To display this message in the view, just add
-
-```html
-<!-- views/songs/show.erb -->
-
-<% if flash.has?(:message) %>
-  <%= flash[:message] %>
-<% end %>
-```
-
-to the top of the view.
-
 ## A Note on the Database
 
 Remember too that you can drop and recreate your database as much as you need
@@ -183,6 +182,6 @@ left off.
 * [Clean URL - Slugs](http://en.wikipedia.org/wiki/Slug_(web_publishing)#Slug)
 
 ## Does this need an update?
+
 Please open a [GitHub issue](https://github.com/learn-co-curriculum/phrg-playlister-sinatra/issues) or [pull-request](https://github.com/learn-co-curriculum/phrg-playlister-sinatra/pulls). Provide a detailed description that explains the issue you have found or the change you are proposing. Then "@" mention your instructor on the issue or pull-request, and send them a link via Connect.
 
-<p data-visibility='hidden'>PHRG Sinatra Playlister</p>
